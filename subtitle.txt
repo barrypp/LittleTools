@@ -1,4 +1,0 @@
-zzx=$("[tm='Jons0']").children(".first").children("a")
-zzx.forEach((x)=>{window.open(x.href.replace("detail","dld"))})
-
-$("div.title").text()
