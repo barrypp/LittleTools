@@ -19,3 +19,10 @@ $("div.title").text()
 Get-Process GPUTweakII | Foreach-Object { $_.CloseMainWindow() | Out-Null; stop-process -Force -Name $_.Name }
 
 powershell -windowstyle hidden -command "sleep 1; "
+
+## Disclosure
+```
+<div id="wrapper" style="position: relative; height: 6808px; overflow: hidden;" >
+  ->
+<div id="wrapper" style="position: relative; height: 6808px;" >
+```
