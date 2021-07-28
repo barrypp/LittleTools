@@ -16,11 +16,20 @@ window.setInterval(()=>{document.querySelector(".p9Cv2").click();},100)
   
 
 ## subtitle.txt
+```
 zzx=$("[tm='Jons0']").children(".first").children("a")  
 zzx.forEach((x)=>{window.open(x.href.replace("detail","dld"))})
 
 $("div.title").text()
-
+```
+  
+## subtitle2
+```
+z=$$("id='aewf'")  
+for (let i = 0; i != z.length; i++) {  
+  setTimeout(() => z[i].click(), 5000 * i)  
+}
+```
 
 ## CloseUnwantedProcess.txt
 Get-Process GPUTweakII | Foreach-Object { $_.CloseMainWindow() | Out-Null; stop-process -Force -Name $_.Name }
