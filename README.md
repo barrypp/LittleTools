@@ -25,7 +25,7 @@ $("div.title").text()
   
 ## subtitle2
 ```
-z=$$("id='aewf'")  
+z=$$("[id='aewf']")  
 for (let i = 0; i != z.length; i++) {  
   setTimeout(() => z[i].click(), 5000 * i)  
 }
