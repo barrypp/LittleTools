@@ -42,3 +42,8 @@ powershell -windowstyle hidden -command "sleep 1; "
   ->
 <div id="wrapper" style="position: relative; height: 6808px;" >
 ```
+
+## Extended,右键菜单配置
+```
+HKEY_CLASSES_ROOT\Directory\Background\shell
+```
