@@ -1,5 +1,4 @@
 # LittleTools
-Little Tools
 
 ## resize linux virtual disk file
 ```
@@ -51,4 +50,29 @@ powershell -windowstyle hidden -command "sleep 1; "
 ## Extended,右键菜单配置
 ```
 HKEY_CLASSES_ROOT\Directory\Background\shell
+```
+
+# opensource-build-script
+
+## gdb
+```
+export PATH=/opt/gcc-arm-10.2-2020.11-x86_64-arm-none-linux-gnueabihf/bin:$PATH
+#
+./configure --host=arm-none-linux-gnueabihf --prefix=/mnt/f/Others/gdb/gdb-10.1_ins
+make -j 8
+make install
+#
+./configure --host=arm-none-linux-gnueabihf --prefix=/mnt/f/Others/gdb/gdb-10.1_ins_static CXXFLAGS="-static"
+make -j 8
+make install
+```
+
+## boost
+```
+# windows
+bootstrap.bat
+.\b2.exe -j 8 --prefix=../boost_1_77_0_win install
+# wsl
+bootstrap.sh
+./b2 -j 8 --prefix=../boost_1_77_0_wsl install
 ```
