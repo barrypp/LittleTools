@@ -1,5 +1,11 @@
 # LittleTools
 
+## storage pool
+```
+New-VirtualDisk -StoragePoolFriendlyName 存储池 -FriendlyName T4 -ResiliencySettingName simple -Size 1GB -ProvisioningType Thin
+```
+
+
 ## resize linux virtual disk file
 ```
 ### create
