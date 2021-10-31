@@ -23,6 +23,11 @@ wsl --import ubuntu-21.10 . ubuntu-wsl_21.10.tar
 wsl --set-default ubuntu-21.10
 ```
 
+## all magnet
+```
+$("a.download-arrow").each((i,x)=>{console.log(x.href)})
+```
+
 ## subtitle.txt
 ```
 zzx=$("[tm='Jons0']").children(".first").children("a")  
