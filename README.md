@@ -26,6 +26,7 @@ wsl --set-default ubuntu-21.10
 ## all magnet
 ```
 $("a.download-arrow").each((i,x)=>{console.log(x.href)})
+$("i.fa-magnet").parent().each((i,x)=>{console.log(x.href)})
 ```
 
 ## subtitle.txt
