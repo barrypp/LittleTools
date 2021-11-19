@@ -2,7 +2,7 @@
 
 ## png
 ```
-zopflipng -m --keepchunks=iTXt --prefix *.png
+parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
 ```
 
 
