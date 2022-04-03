@@ -1,5 +1,10 @@
 # LittleTools
 
+## powershell runas
+```
+Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-SecureString -AsPlainText -Force))) -WorkingDirectory ./ ./1.EXE
+```
+
 ## png
 ```
 parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
