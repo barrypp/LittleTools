@@ -1,5 +1,19 @@
 # LittleTools
 
+## powershell wake-on-lan
+```
+#based on https://www.pdq.com/blog/wake-on-lan-wol-magic-packet-powershell/
+$Mac = "FF:FF:FF:FF:FF:FF"
+$MacByteArray = $Mac -split "[:-]" | ForEach-Object { [Byte] "0x$_"}
+[Byte[]] $MagicPacket = (,0xFF * 6) + ($MacByteArray  * 16)
+$UdpClient = New-Object System.Net.Sockets.UdpClient
+$UdpClient.Connect(([System.Net.IPAddress]("192.168.1.255")),7)
+$UdpClient.Send($MagicPacket,$MagicPacket.Length)
+$UdpClient.Close()
+
+```
+
+
 ## powershell runas
 ```
 Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-SecureString -AsPlainText -Force))) -WorkingDirectory ./ ./1.EXE
