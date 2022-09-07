@@ -1,5 +1,12 @@
 # LittleTools
 
+
+## powershell get-all-exe-path
+```
+Get-Childitem -r -Path ./* -Include *.exe | % {Write-Host -NoNewline "`"$_.fullname`" "}
+```
+
+
 ## powershell wake-on-lan
 ```
 #based on https://www.pdq.com/blog/wake-on-lan-wol-magic-packet-powershell/
