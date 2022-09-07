@@ -3,7 +3,7 @@
 
 ## powershell get-all-exe-path
 ```
-Get-Childitem -r -Path ./* -Include *.exe | % {Write-Host -NoNewline "`"$_.fullname`" "}
+Get-Childitem -r -Path ./* -Include *.exe | % {Write-Host -NoNewline "`"$_`" "}
 ```
 
 
