@@ -4,6 +4,7 @@
 ## powershell get-all-exe-path
 ```
 Get-Childitem -r -Path ./* -Include *.exe | % {Write-Host -NoNewline "`"$_`" "}
+Get-Childitem -r -Path ./* -Include *.exe | % {"`"{0}`"" -f (Resolve-Path -Relative $_) | Write-Host -NoNewline}
 ```
 
 
