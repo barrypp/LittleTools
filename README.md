@@ -27,9 +27,10 @@ $UdpClient.Close()
 Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-SecureString -AsPlainText -Force))) -WorkingDirectory ./ ./1.EXE
 ```
 
-## png
+## png jpg webp
 ```
 parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
+parallel mogrify -quality 99 -format webp ::: *.png
 ```
 
 
