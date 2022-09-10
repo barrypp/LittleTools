@@ -33,6 +33,19 @@ parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
 parallel mogrify -quality 99 -format webp ::: *.png
 ```
 
+## png jpg to webp in zip
+```
+$env:Path = 'C:\Program Files\7-Zip;' + $env:Path
+
+$a = ls -Filter '*.zip'
+mv -LiteralPath $a -Destination from.zip
+7z x from.zip -ofrom
+mkdir to
+
+wsl parallel mogrify -path ./to -quality 99 -format webp ::: ./from/*
+
+7z a -mx0 -tzip "$a" ./to/*
+```
 
 ## storage pool
 ```
