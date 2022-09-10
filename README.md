@@ -33,7 +33,7 @@ parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
 parallel mogrify -quality 99 -format webp ::: *.png
 ```
 
-## png jpg to webp in zip
+## png jpg to webp in zip (webp解码比jpg慢，体积比jpg小)
 ```
 $env:Path = 'C:\Program Files\7-Zip;' + $env:Path
 
