@@ -31,9 +31,10 @@ Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-Secur
 ```
 parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
 parallel mogrify -quality 99 -format webp ::: *.png
+wsl identify -verbose *.jpg `| grep 'Qua'
 ```
 
-## png jpg to webp in zip (webp解码比jpg慢，体积比jpg小)
+## png to jpg quality99 in zip (webp解码比jpg慢，体积比jpg小)
 ```
 $env:Path = 'C:\Program Files\7-Zip;' + $env:Path
 
@@ -42,9 +43,11 @@ mv -LiteralPath $a -Destination from.zip
 7z x from.zip -ofrom
 mkdir to
 
-wsl parallel mogrify -path ./to -quality 99 -format webp ::: ./from/*
+wsl parallel mogrify -path ./to -quality 99 -format jpg ::: ./from/*/*/*
 
 7z a -mx0 -tzip "$a" ./to/*
+
+Read-Host -Prompt "Press any key to continue"
 ```
 
 ## storage pool
