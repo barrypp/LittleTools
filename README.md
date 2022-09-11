@@ -1,5 +1,10 @@
 # LittleTools
 
+## powershell output format
+```
+pwd;ls | select-object name #前面的pwd会改变分号后面命令的输出格式
+```
+
 
 ## powershell get-all-exe-path
 ```
