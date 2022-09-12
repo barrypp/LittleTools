@@ -9,7 +9,7 @@ pwd;ls | select-object name #前面的pwd会改变分号后面命令的输出格
 ## powershell get-all-exe-path
 ```
 Get-Childitem -r -Path ./* -Include *.exe | % {Write-Host -NoNewline "`"$_`" "}
-Get-Childitem -r -Path ./* -Include *.exe | % {"`"{0}`"" -f (Resolve-Path -Relative $_) | Write-Host -NoNewline}
+Get-Childitem -r -Path ./* -Include *.exe | % {"`"{0}`" " -f (Resolve-Path -Relative $_) | Write-Host -NoNewline}
 ```
 
 
