@@ -35,8 +35,9 @@ Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-Secur
 ## png jpg webp
 ```
 parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
-parallel mogrify -quality 99 -format webp ::: *.png
+parallel mogrify -quality 99 -format jpg ::: *.png
 wsl identify -verbose *.jpg `| grep 'Qua'
+mogrify -resize 3840x2160 -format jpg -quality 99 *.jpg
 ```
 
 ## png to jpg quality99 in zip (webp解码比jpg慢，体积比jpg小)
