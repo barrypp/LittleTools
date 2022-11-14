@@ -1,8 +1,9 @@
 # LittleTools
 
-## powershell output format
+## powershell
 ```
 pwd;ls | select-object name #前面的pwd会改变分号后面命令的输出格式
+ls -Directory | % {copy .\desktop.ini $_} #把子目录配置为相同的类型
 ```
 
 
