@@ -1,15 +1,23 @@
 # LittleTools
 
-## powershell
+
+## Other
 ```
 pwd;ls | select-object name #前面的pwd会改变分号后面命令的输出格式
 ls -Directory | % {copy .\desktop.ini $_} #把子目录配置为相同的类型
+
+Get-Process GPUTweakII | % { $_.CloseMainWindow() | Out-Null; stop-process -Force -Name $_.Name } #CloseUnwantedProcess
 Start-Process -Credential ([pscredential]::new('test', ('test' | ConvertTo-SecureString -AsPlainText -Force))) -WorkingDirectory ./ ./1.EXE #runas
+cmd /c start /min "" powershell -WindowStyle Hidden -File "1.ps1" #run script Hidden
+crontab -e
+
 (Get-PSDrive).Name -match '^[a-z]$' | % {manage-bde.exe ("$_"+":") -protectors -get -Type Certificate } | sls -Pattern "[0-9a-f]{40}" #get bitlocker drive Certificate
 Get-Childitem -r -Path ./* -Include *.exe | % {"`"{0}`" " -f (Resolve-Path -Relative $_) | Write-Host -NoNewline} #get-all-exe-path
+lsof -i -sTCP:LISTEN
+
 New-VirtualDisk -StoragePoolFriendlyName 存储池 -FriendlyName T4 -ResiliencySettingName simple -Size 1GB -ProvisioningType Thin -NumberOfColumns 4 #storage pool
-Get-Process GPUTweakII | Foreach-Object { $_.CloseMainWindow() | Out-Null; stop-process -Force -Name $_.Name } #CloseUnwantedProcess
-powershell -windowstyle hidden -command "sleep 1; "
+
+Set-VMSwitch WSL -NetAdapterName '以太网' #bridge wsl to LAN
 ```
 
 ## powershell wake-on-lan
@@ -23,6 +31,56 @@ $UdpClient.Connect(([System.Net.IPAddress]("192.168.1.255")),7)
 $UdpClient.Send($MagicPacket,$MagicPacket.Length)
 $UdpClient.Close()
 ```
+
+## nftables router
+```
+/etc/nftables.conf
+
+nft flush ruleset
+nft add table nat
+nft add chain nat postrouting { type nat hook postrouting priority 100 \; }
+nft add rule nat postrouting ip saddr 192.168.1.0/24 iif eth0 masquerade
+nft list ruleset
+
+table ip nat {
+	chain postrouting {
+		type nat hook postrouting priority srcnat; policy accept;
+		ip saddr 192.168.1.0/24 iif "eth0" masquerade
+	}
+}
+```
+
+## set mtu
+```
+netsh interface ipv4 show subinterface
+netsh interface ipv4 set subinterface "以太网" mtu=1500
+ip link set dev eth0 mtu 1500
+```
+
+## ykman
+```
+$key=Read-Host -MaskInput
+$pin=Read-Host -MaskInput
+$slot = ""
+$pin_policy = ""
+$touch_policy = ""
+
+ykman piv info
+
+#bitlocker cert (cannot use "--pin-policy ALWAYS")
+ykman piv certificates delete -P $pin -m $key $slot
+ykman piv keys generate -P $pin -m $key -a RSA2048 -F PEM --touch-policy $touch_policy $slot pub.pem
+ykman piv certificates generate -P $pin -m $key -s "Barrypp.zzx's bitlocker" -d 36500 -a SHA512 $slot pub.pem
+rm pub.pem
+
+#SSH cert
+ykman piv certificates delete -P $pin -m $key $slot
+ykman piv keys generate -P $pin -m $key -a ECCP384 -F PEM --pin-policy $pin_policy --touch-policy $touch_policy $slot pub.pem
+ykman piv certificates generate -P $pin -m $key -s "Barrypp" -d 36500 -a SHA512 $slot pub.pem
+rm pub.pem
+
+```
+
 
 ## png jpg webp
 ```
@@ -91,7 +149,7 @@ HKEY_CLASSES_ROOT\Directory\Background\shell
 ```
 
 
-# Yubikey & openSSL
+# CA by Yubikey & openSSL
 
 ## usbip
 ```
@@ -103,7 +161,7 @@ modprobe -a usbip_core usbip_host vhci_hcd
 usbip attach -r barrypp -b 4-4
 ```
 
-## openssl & ykman
+## ykman & openssl  
 ```
 #
 read -s pin
