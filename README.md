@@ -78,7 +78,6 @@ ykman piv certificates delete -P $pin -m $key $slot
 ykman piv keys generate -P $pin -m $key -a ECCP384 -F PEM --pin-policy $pin_policy --touch-policy $touch_policy $slot pub.pem
 ykman piv certificates generate -P $pin -m $key -s "Barrypp" -d 36500 -a SHA512 $slot pub.pem
 rm pub.pem
-
 ```
 
 
