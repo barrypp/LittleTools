@@ -121,6 +121,52 @@ powershell -windowstyle hidden -command "sleep 1; "
 HKEY_CLASSES_ROOT\Directory\Background\shell
 ```
 
+
+# Yubikey & openSSL
+
+## usbip
+```
+usbipd list
+usbipd bind --force -i 1050:0407
+usbipd unbind --all
+
+modprobe -a usbip_core usbip_host vhci_hcd
+usbip attach -r barrypp -b 4-4
+```
+
+## openssl & ykman
+```
+#
+read -s pin
+read -s key
+systemctl start pcscd
+ykman piv info
+
+CA
+ykman piv keys generate -P $pin -m $key -a ECCP384 -F PEM --pin-policy ALWAYS --touch-policy ALWAYS 9c CA-pub.pem
+ykman piv certificates generate -P $pin -m $key -s "Barrypp.zzx's CA" -d 36500 -a SHA512 9c CA-pub.pem
+ykman piv certificates export -F PEM 9c CA-cert.pem
+openssl x509 -text < CA-cert.pem
+
+EE
+openssl genpkey -algorithm ED448 -out EE-private.pem
+openssl req -sha512 -new -config EE-csr.conf -key EE-private.pem -out EE-csr.pem
+openssl req -text -verify -in EE-csr.pem
+
+EE2
+openssl genrsa -out EE2-private.pem 4096
+openssl req -sha256 -new -config EE-csr.conf -key EE2-private.pem -out EE2-csr.pem
+openssl req -text -verify -in EE2-csr.pem
+
+EE3
+openssl req -x509 -newkey rsa:4096 -nodes -out EE3-cert.pem -keyout EE3-private.pem -days 365
+
+Sign
+PKCS11_MODULE_PATH=/usr/lib/x86_64-linux-gnu/libykcs11.so openssl x509 -engine pkcs11 -CAkeyform engine -CAkey "pkcs11:object=Private key for Digital Signature;type=private"  -sha512 -CA CA-cert.pem -req -in EE-csr.pem -extfile EE-cert.conf -out EE-cert.pem  -days 365
+PKCS11_MODULE_PATH=/usr/lib/x86_64-linux-gnu/libykcs11.so openssl x509 -engine pkcs11 -CAkeyform engine -CAkey "pkcs11:object=Private key for Digital Signature;type=private"  -sha256 -CA CA-cert.pem -req -in EE2-csr.pem -extfile EE-cert.conf -out EE2-cert.pem  -days 365
+openssl x509 -text < EE-cert.pem
+```
+
 # opensource-build-script
 
 ## gdb
