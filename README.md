@@ -214,3 +214,12 @@ bootstrap.bat
 bootstrap.sh
 ./b2 -j 8 --prefix=../boost_1_77_0_wsl install
 ```
+
+# ubuntu base config
+
+## other
+```
+sshd_config: AuthenticationMethods publickey
+/etc/systemd/network: "Example 1. Static network configuration" (https://www.freedesktop.org/software/systemd/man/systemd.network.html)
+/etc/systemd/resolved.conf: LLMNR=yes
+```
