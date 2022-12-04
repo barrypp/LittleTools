@@ -224,3 +224,38 @@ sshd_config: AuthenticationMethods publickey
 /etc/systemd/resolved.conf: LLMNR=yes,MulticastDNS=yes,DNS=8.8.8.8
 /etc/sysctl.conf: net.ipv4.ip_forward=1
 ```
+
+
+# VBoxManage 蛋疼
+```
+VBoxManage -V
+VBoxManage list vms
+VBoxManage list extpacks
+VBoxManage unregistervm Win
+VBoxManage discardstate Win
+VBoxManage showvminfo Win > Win.txt
+vboxmanage extpack install Oracle_VM_VirtualBox_Extension_Pack-7.0.4.vbox-extpack
+
+
+VBoxManage createvm --name Win --ostype=Windows11_64 --register
+VBoxManage modifyvm Win --tpm-type 2.0 --firmware efi64 --nic1 bridged --bridge-adapter1 enp59s0 --cpus=4 --memory=4096 --vram=128 --recording=off
+
+VBoxManage modifynvram Win inituefivarstore
+VBoxManage modifynvram Win enrollmssignatures
+
+VBoxManage storagectl Win --name ccc --add sata --bootable=on
+VBoxManage createmedium disk --filename="/root/VirtualBox VMs/Win/Win.vdi" --size=50000
+VBoxManage storageattach Win --storagectl=ccc --port=1 --discard=on --medium="/root/VirtualBox VMs/Win/Win.vdi" --type=hdd
+VBoxManage storageattach Win --storagectl=ccc --port=2 --medium="/root/Windows 11 22H2.iso" --type=dvddrive
+
+
+VBoxManage storageattach Win --storagectl=iso --port=2 --medium=none
+
+VBoxManage setproperty vrdeextpack "Oracle VM VirtualBox Extension Pack"
+VBoxManage modifyvm Win --vrde=on --vrdeproperty VNCPassword=1
+VBoxManage modifyvm Win --vrde=off
+
+
+VBoxManage startvm Win --type=headless
+VBoxManage controlvm Win poweroff 
+```
