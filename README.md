@@ -215,7 +215,7 @@ bootstrap.sh
 ./b2 -j 8 --prefix=../boost_1_77_0_wsl install
 ```
 
-# ubuntu base config
+# ubuntu install & Maintenance
 
 ## other
 ```
@@ -223,6 +223,26 @@ sshd_config: AuthenticationMethods publickey
 /etc/netpan: "static ip"
 /etc/systemd/resolved.conf: LLMNR=yes,MulticastDNS=yes,DNS=8.8.8.8
 /etc/sysctl.conf: net.ipv4.ip_forward=1
+```
+
+## package
+```
+dpkg-query --show --showformat='${Installed-Size}\t${Package}\n' | sort -rh | head -25 | awk '{print $1/1024,"MB", $2}'
+
+cache
+/var/cache/apt/archives
+/var/cache/apt/archives/partial
+apt-get clean
+
+list
+dpkg -L snapd
+dpkg --list "snapd*"
+
+remove
+apt-get autoremove --purge snapd
+
+depends
+debtree -R -I --rdeps-depth=9 snapd | dot -Tpng > 1.png
 ```
 
 
