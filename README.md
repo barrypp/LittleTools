@@ -220,7 +220,7 @@ bootstrap.sh
 ## other
 ```
 sshd_config: AuthenticationMethods publickey
-/etc/systemd/network: "Example 1. Static network configuration" (https://www.freedesktop.org/software/systemd/man/systemd.network.html)
+/etc/netpan: "static ip"
 /etc/systemd/resolved.conf: LLMNR=yes,MulticastDNS=yes,DNS=8.8.8.8
 /etc/sysctl.conf: net.ipv4.ip_forward=1
 ```
