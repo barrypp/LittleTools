@@ -18,6 +18,8 @@ lsof -i -sTCP:LISTEN
 New-VirtualDisk -StoragePoolFriendlyName 存储池 -FriendlyName T4 -ResiliencySettingName simple -Size 1GB -ProvisioningType Thin -NumberOfColumns 4 #storage pool
 
 Set-VMSwitch WSL -NetAdapterName '以太网' #bridge wsl to LAN
+
+ffmpeg -y -f concat -safe 0 -i "1.txt" -i "1.mp4" -map 0:v -map 1 -map -1:v -c copy "R:/1 new.mkv"
 ```
 
 ## powershell wake-on-lan
