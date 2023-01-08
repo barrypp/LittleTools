@@ -19,7 +19,8 @@ New-VirtualDisk -StoragePoolFriendlyName 存储池 -FriendlyName T4 -ResiliencyS
 
 Set-VMSwitch WSL -NetAdapterName '以太网' #bridge wsl to LAN
 
-ffmpeg -y -f concat -safe 0 -i "1.txt" -i "1.mp4" -map 0:v -map 1 -map -1:v -c copy "R:/1 new.mkv"
+Get-ChildItem .\*.mp4 | Sort-Object {[int]($_.basename -replace '\D')} | % {echo "file '$_'" >> 1.txt}
+ffmpeg -y -f concat -safe 0 -i "1.txt" -i "../$v.mp4" -map 0:v -map 1 -map -1:v -c copy "R:/$v new.mkv"
 ```
 
 ## powershell wake-on-lan
