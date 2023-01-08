@@ -246,6 +246,9 @@ apt-get autoremove --purge snapd
 
 depends
 debtree -R -I --rdeps-depth=9 snapd | dot -Tpng > 1.png
+
+after kenel update
+dpkg-reconfigure virtualbox
 ```
 
 
