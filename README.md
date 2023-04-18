@@ -41,6 +41,20 @@ $UdpClient.Send($MagicPacket,$MagicPacket.Length)
 $UdpClient.Close()
 ```
 
+## iptables firewall & router
+```
+iptables -t nat -A POSTROUTING -o tun0 -j MASQUERADE
+
+iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+iptables -A INPUT -s $IP -j ACCEPT
+iptables -A INPUT -i lo -j ACCEPT
+iptables -A INPUT -p icmp -j ACCEPT
+iptables -P INPUT DROP
+iptables -A FORWARD -s $IP -j ACCEPT
+iptables -A FORWARD -d $IP -j ACCEPT
+iptables -P FORWARD DROP
+```
+
 ## nftables router
 ```
 /etc/nftables.conf
