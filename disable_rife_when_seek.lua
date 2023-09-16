@@ -9,10 +9,14 @@ function print_time(...)
     print("+" .. os.time() - os_time_start .. "s", ...)
 end
 
-function kill_and_add_timeout(timer,...)
+function kill_timeout(timer)
     if (timer ~= nil and timer:is_enabled()) then
         timer:kill()
     end
+end
+
+function kill_and_add_timeout(timer,...)
+    kill_timeout(timer)
     return mp.add_timeout(...)
 end
 
@@ -69,6 +73,17 @@ end
 --     print_time("on_var",value)
 -- end
 
-mp.register_event("seek", on_seek)
+function on_start_file()
+    kill_timeout(timer_restore)
+    name = mp.get_property_native("filename")
+    if (name:match("%.png$") or name:match("%.jpg$") or name:match("%.gif$")) then
+        mp.unregister_event(on_seek)
+    else
+        mp.register_event("seek", on_seek)
+    end
+end
+
+mp.register_event("start-file", on_start_file)
+
 -- mp.observe_property("estimated-vf-fps", "native", on_estimated_vf_fps)
 -- mp.observe_property("width", "native", on_var)
