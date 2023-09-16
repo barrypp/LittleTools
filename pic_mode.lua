@@ -117,7 +117,7 @@ function on_start_file()
         mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
         mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
         mp.add_forced_key_binding("MBTN_LEFT_DBL","MBTN_LEFT_DBL",on_MBTN_LEFT_DBL)
-    elseif (name:match("%.gif$")) then
+    elseif (ext == "gif") then
         is_pic = false
         mp.set_property_bool("pause", false)
         mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -1 exact") end)
