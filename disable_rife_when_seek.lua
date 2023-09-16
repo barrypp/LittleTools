@@ -27,9 +27,9 @@ end
 -- end
 
 function restore()
-    print_time("restore")
     mp.set_property("vf", p.vf) --导致丢帧1s左右
-    mp.osd_message("restore vf, vf=" .. p.vf)
+    print_time("vf=",p.vf)
+    --mp.osd_message("restore vf, vf=" .. p.vf)
 end
 
 function on_seek()
@@ -41,9 +41,13 @@ function on_seek()
     p.last_time_pos = p.time_pos
     if (timer_restore == nil or (not timer_restore:is_enabled())) then
         p.vf = mp.get_property("vf")
+        if p.vf == "" then
+            return
+        end
     end
     mp.set_property("vf", "")
-    mp.osd_message("temporarily disable vf", delay)
+    print_time("vf=","")
+    --mp.osd_message("temporarily disable vf", delay)
     timer_restore = kill_and_add_timeout(timer_restore, delay, restore)
 end
 
@@ -52,15 +56,19 @@ end
 --     if (value == nil) then
 --         return
 --     end
---     mp.unobserve_property(on_estimated_vf_fps)
---     p.time_pos_of_restore_pause = nil
---     mp.set_property_bool("pause", p.pause)
+--     -- mp.unobserve_property(on_estimated_vf_fps)
+--     -- p.time_pos_of_restore_pause = nil
+--     -- mp.set_property_bool("pause", p.pause)
 -- end
 
--- function on_time_pos(_,value)
---     print_time("on_time_pos",value)
+-- function on_var(_,value)
+--     local working_directory = mp.get_property('working-directory')
+--     local path = mp.get_property('path')
+--     print_time("on_var",working_directory,path)
+--     print_time("on_var",working_directory:match('Anime4k'))    
+--     print_time("on_var",value)
 -- end
--- mp.observe_property("time-pos", "native", on_time_pos)
 
 mp.register_event("seek", on_seek)
-
+-- mp.observe_property("estimated-vf-fps", "native", on_estimated_vf_fps)
+-- mp.observe_property("width", "native", on_var)
