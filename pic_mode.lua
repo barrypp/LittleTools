@@ -39,7 +39,7 @@ function do_fit_to_width(f)
     end
 end
 
-function do_my_WHEEL_UP()
+function on_my_WHEEL_UP()
     if (not file_load_done) then
         return
     end
@@ -59,7 +59,7 @@ function do_my_WHEEL_UP()
     end
 end
 
-function do_my_WHEEL_DOWN()
+function on_my_WHEEL_DOWN()
     if (not file_load_done) then --在load done之前可能有多余操作
         return
     end    
@@ -79,7 +79,7 @@ function do_my_WHEEL_DOWN()
     end    
 end
 
-function do_my_MBTN_LEFT_DBL()
+function on_my_MBTN_LEFT_DBL()
     if (fit_to_width) then
         do_fit_to_width(false)
     else
@@ -93,9 +93,9 @@ function on_start_file()
     if (name:match("%.png$") or name:match("%.jpg$")) then
         print_time("pic_mode on")
         mp.set_property_bool("pause", true)
-        mp.add_forced_key_binding("WHEEL_UP","my_WHEEL_UP",do_my_WHEEL_UP)
-        mp.add_forced_key_binding("WHEEL_DOWN","my_WHEEL_DOWN",do_my_WHEEL_DOWN)
-        mp.add_forced_key_binding("MBTN_LEFT_DBL","my_MBTN_LEFT_DBL",do_my_MBTN_LEFT_DBL)
+        mp.add_forced_key_binding("WHEEL_UP","my_WHEEL_UP",on_my_WHEEL_UP)
+        mp.add_forced_key_binding("WHEEL_DOWN","my_WHEEL_DOWN",on_my_WHEEL_DOWN)
+        mp.add_forced_key_binding("MBTN_LEFT_DBL","my_MBTN_LEFT_DBL",on_my_MBTN_LEFT_DBL)
     elseif (name:match("%.gif$")) then
         mp.set_property_bool("pause", false)
         mp.add_forced_key_binding("WHEEL_UP","seek_1s_prev",function () mp.command("seek -1 exact") end)
