@@ -114,13 +114,24 @@ mogrify -resize 3840x2160 -format jpg -quality 99 *.jpg
 
 ## png to jpg quality99 in zip (webp解码比jpg慢，体积比jpg小)
 ```
-$env:Path = 'C:\Program Files\7-Zip;' + $env:Path
-$a = ls -Filter '*.zip'
-mv -LiteralPath $a -Destination from.zip
-7z x from.zip -ofrom
-mkdir to
-wsl parallel mogrify -path ./to -quality 99 -format jpg ::: ./from/*/*/*
-7z a -mx0 -tzip "$a" ./to/*
+$env:Path = 'C:\Program Files\7-Zip;C:\ProgramFiles\mpv;' + $env:Path
+
+$files = ls -Filter '1/*.cbz'
+foreach ($a in $files)
+{
+    $b = $a.Name
+    7z x $a.FullName -o"2/tmp"
+    mkdir 3/tmp
+
+    wsl parallel -j 8 mogrify -path ./3/tmp -quality 99 -format webp ::: ./2/tmp/*
+
+    7z a -mx0 -tzip "3/$b" ./3/tmp/*
+
+    rm -R -Force 2/tmp
+    rm -R -Force 3/tmp
+}
+
+Read-Host -Prompt "Press any key to continue"
 ```
 
 ## resize linux virtual disk file
