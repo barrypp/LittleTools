@@ -43,7 +43,6 @@ end
 function remove_key_binding()
     mp.remove_key_binding("WHEEL_UP")
     mp.remove_key_binding("WHEEL_DOWN")
-    mp.remove_key_binding("MBTN_LEFT")
     mp.remove_key_binding("MBTN_BACK")
 end
 
@@ -112,21 +111,11 @@ function on_WHEEL_DOWN()
     end    
 end
 
-function on_MBTN_LEFT()
+function on_MBTN_BACK()
     if (fit_to_width) then
         do_fit_to_width(false)
     else
         do_fit_to_width(true)
-    end
-end
-
-function on_MBTN_BACK()
-    fit_to_width = false
-    playlist_count = mp.get_property_native("playlist-count")
-    osd_width = mp.get_property_native("osd-width")
-    mouse = mp.get_property_native("mouse-pos")
-    if (mouse.hover) then
-        mp.set_property_number("playlist-pos",math.floor(playlist_count*mouse.x/osd_width))
     end
 end
 
@@ -159,7 +148,6 @@ function on_first_frame(_,value)
             do_fit_to_width(fit_to_width)
             mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
             mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
-            mp.add_forced_key_binding("MBTN_LEFT","MBTN_LEFT",on_MBTN_LEFT)
             mp.add_forced_key_binding("MBTN_BACK","MBTN_BACK",on_MBTN_BACK)
         elseif (file_type == "gif") then
             mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -1 exact") end)
