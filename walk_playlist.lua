@@ -28,7 +28,7 @@ function on_mouse_move(_,mouse)
 end
 
 function on_MBTN_LEFT(s)
-    if (s.event == "down") then
+    if (s.event == "down" and mp.get_property_native("fullscreen")) then
         is_mouse_down = true
         mp.observe_property("mouse-pos", "native", on_mouse_move)
     else
@@ -37,6 +37,13 @@ function on_MBTN_LEFT(s)
     end
 end
 
+function on_fullscreen(_,value)
+    if (not value) then
+        mp.unobserve_property(on_mouse_move)
+    end
+end
+
 mp.observe_property("estimated-vf-fps", "native", on_first_frame)
+mp.observe_property("fullscreen", "native", on_fullscreen)
 mp.add_forced_key_binding("MBTN_LEFT","MBTN_LEFT",on_MBTN_LEFT,{complex=true})
 
