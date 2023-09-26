@@ -9,6 +9,26 @@ function print_time(...)
     print("+" .. os.time() - os_time_start .. "s", ...)
 end
 
+function Set (t) -- from autoload.lua
+    local set = {}
+    for _, v in pairs(t) do set[v] = true end
+    return set
+end
+
+ext_img = Set { -- from autoload.lua with modify
+    'avif', 'bmp', 'j2k', 'jp2', 'jpeg', 'jpg', 'jxl', 'png',
+    'svg', 'tga', 'tif', 'tiff', 'webp', 'psd'
+}
+
+function get_extension(path) -- from autoload.lua
+    match = string.match(path, "%.([^%.]+)$" )
+    if match == nil then
+        return "nomatch"
+    else
+        return match
+    end
+end
+
 function kill_timeout(timer)
     if (timer ~= nil and timer:is_enabled()) then
         timer:kill()
@@ -74,9 +94,9 @@ end
 -- end
 
 function on_start_file()
+    ext = get_extension(mp.get_property_native("filename"))
     kill_timeout(timer_restore)
-    name = mp.get_property_native("filename")
-    if (name:match("%.png$") or name:match("%.jpg$") or name:match("%.gif$")) then
+    if (ext_img[string.lower(ext)] ~= nil) then
         mp.unregister_event(on_seek)
     else
         mp.register_event("seek", on_seek)
