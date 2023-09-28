@@ -32,13 +32,21 @@ function get_extension(path) -- from autoload.lua
     end
 end
 
--- function set_file_load_done()
---     playlist_pos = mp.get_property_native("playlist-pos")
---     playlist_count = mp.get_property_native("playlist-count")
---     if ((playlist_pos ~= 0) and ((playlist_pos+1) ~= playlist_count)) then
---         file_load_done = false
---     end
--- end
+function remove_key_binding_if_not_first()
+    playlist_pos = mp.get_property_native("playlist-pos")
+    playlist_count = mp.get_property_native("playlist-count")
+    if (playlist_pos ~= 0) then
+        remove_key_binding()
+    end
+end
+
+function remove_key_binding_if_not_last()
+    playlist_pos = mp.get_property_native("playlist-pos")
+    playlist_count = mp.get_property_native("playlist-count")
+    if ((playlist_pos+1) ~= playlist_count) then
+        remove_key_binding()
+    end
+end
 
 function remove_key_binding()
     mp.remove_key_binding("WHEEL_UP")
@@ -78,7 +86,7 @@ function on_WHEEL_UP()
         y = mp.get_property_native("video-pan-y")
         if (y > l.pan_y_max) then
             last_img_is_prev = false
-            remove_key_binding()
+            remove_key_binding_if_not_first()
             mp.command("playlist-prev")
         end
         y = y + 0.02
@@ -87,7 +95,7 @@ function on_WHEEL_UP()
         end
         mp.set_property_number("video-pan-y",y)
     else
-        remove_key_binding()
+        remove_key_binding_if_not_first()
         mp.command("playlist-prev")
     end
 end
@@ -97,7 +105,7 @@ function on_WHEEL_DOWN()
         y = mp.get_property_native("video-pan-y")
         if (y < l.pan_y_min) then
             last_img_is_prev = true
-            remove_key_binding()
+            remove_key_binding_if_not_last()
             mp.command("playlist-next")
         end
         y = y - 0.02
@@ -106,7 +114,7 @@ function on_WHEEL_DOWN()
         end
         mp.set_property_number("video-pan-y",y)
     else
-        remove_key_binding() --在load done之前可能有多余操作
+        remove_key_binding_if_not_last() --在load done之前可能有多余操作
         mp.command("playlist-next")
     end    
 end
