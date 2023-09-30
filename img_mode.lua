@@ -140,6 +140,7 @@ function on_start_file()
         mp.set_property_bool("pause", false)
         remove_key_binding()
     end
+    mp.observe_property("estimated-vf-fps", "native", on_first_frame)
 end
 
 function on_file_loaded()
@@ -151,20 +152,20 @@ function on_file_loaded()
 end
 
 function on_first_frame(_,value)
-    if (value ~= nil) then
-        if (file_type == "img") then
-            do_fit_to_width(fit_to_width)
-            mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
-            mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
-            mp.add_forced_key_binding("MBTN_BACK","MBTN_BACK",on_MBTN_BACK)
-        elseif (file_type == "gif") then
-            mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -1 exact") end)
-            mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 1 exact") end)
-        else
-            mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -2 exact") end)
-            mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 2 exact") end)
-            do_fit_to_width(false)
-        end
+    if (value == nil) then return end
+    mp.unobserve_property(on_first_frame)
+    if (file_type == "img") then
+        do_fit_to_width(fit_to_width)
+        mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
+        mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
+        mp.add_forced_key_binding("MBTN_BACK","MBTN_BACK",on_MBTN_BACK)
+    elseif (file_type == "gif") then
+        mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -1 exact") end)
+        mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 1 exact") end)
+    else
+        mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -2 exact") end)
+        mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 2 exact") end)
+        do_fit_to_width(false)
     end
 end
 
@@ -175,5 +176,4 @@ end
 
 mp.register_event("start-file", on_start_file)
 mp.register_event("file-loaded", on_file_loaded)
-mp.observe_property("estimated-vf-fps", "native", on_first_frame)
 
