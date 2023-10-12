@@ -22,6 +22,14 @@ Set-VMSwitch WSL -NetAdapterName '以太网' #bridge wsl to LAN
 Get-ChildItem .\*.mp4 | Sort-Object {[int]($_.basename -replace '\D')} | % {echo "file '$_'" >> 1.txt}
 ```
 
+## check & fix system
+```
+sfc /scannow
+Dism /Online /Cleanup-Image /ScanHealth
+Dism /Online /Cleanup-Image /CheckHealth
+Dism /Online /Cleanup-Image /RestoreHealth
+```
+
 ## ffmpeg
 ```
 ffmpeg -y -f concat -safe 0 -i "1.txt" -i "../$v.mp4" -map 0:v -map 1 -map -1:v -c copy "R:/$v new.mkv" #concat
