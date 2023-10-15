@@ -112,11 +112,10 @@ rm pub.pem
 ```
 
 
-## png jpg webp
+## jxl jpg
 ```
-parallel zopflipng -m --keepchunks=iTXt --prefix ::: *.png
-parallel mogrify -quality 99 -format jpg ::: *.png
-wsl identify -verbose *.jpg `| grep 'Qua'
+mogrify -path ./tmp -quality 90 -format jxl *.jpg
+identify -verbose *.jpg `| grep 'Qua'
 mogrify -resize 3840x2160 -format jpg -quality 99 *.jpg
 ```
 
@@ -229,10 +228,10 @@ make install
 ```
 # windows
 bootstrap.bat
-.\b2.exe -j 8 --prefix=../boost_1_77_0_win install
+.\b2.exe -j8 --toolset=msvc address-model=64 link=static --prefix=../boost_win install
 # wsl
 bootstrap.sh
-./b2 -j 8 --prefix=../boost_1_77_0_wsl install
+./b2 -j8 address-model=64 link=static --prefix=../boost_wsl install
 ```
 
 # ubuntu install & Maintenance
