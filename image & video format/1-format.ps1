@@ -6,9 +6,10 @@ ls -Filter '1/*.cbz' | ForEach-Object {
 
     mv 2/tmp/*.mkv 3/tmp/
     mv 2/tmp/*.gif 3/tmp/
+#    mv 2/tmp/*.jxl 3/tmp/
 
     ls -Filter '2/tmp/*' | foreach-Object -Parallel {
-        mogrify -path ./3/tmp -quality 90 -format jxl "2/tmp/$($_.Name)"
+        mogrify -path ./3/tmp -quality 90 -define jxl:effort -format jxl "2/tmp/$($_.Name)"
         $a = Split-Path $_ -LeafBase
         $b = Split-Path $_ -Leaf
         "$b to jxl {0:F}kB {1:F}kB" -f ($_.length/1kB),((ls ./3/tmp/$a.jxl).length/1kB)
