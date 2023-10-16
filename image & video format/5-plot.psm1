@@ -30,7 +30,7 @@ function plot_vmaf($data){
     $chart.BackColor = $legend.BackColor = $Black
     $chart.ForeColor = $legend.ForeColor = $White
 
-    $data.keys | ForEach-Object {
+    $data.keys | sort | ForEach-Object {
         $chart.Series.Add($_) | out-null
         $chart.Series[$_].ChartType = [System.Windows.Forms.DataVisualization.Charting.SeriesChartType]::Line
         $chart.Series[$_].Points.DataBindXY($data[$_].Frame, $data[$_].vmaf)
