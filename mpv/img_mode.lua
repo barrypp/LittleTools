@@ -1,12 +1,4 @@
 local os_time_start = os.time()
-local fit_to_width = false
-local last_img_is_prev = true
-local file_type = ""
-local l = {
-    zoom = 0,
-    pan_y_max = 0,
-    pan_y_min = 0,
-}
 
 function print_time(...)
     print("+" .. os.time() - os_time_start .. "s", ...)
@@ -18,13 +10,13 @@ function Set (t) -- from autoload.lua
     return set
 end
 
-ext_img = Set { -- from autoload.lua with modify
+local ext_img = Set { -- from autoload.lua with modify
     'avif', 'bmp', 'j2k', 'jp2', 'jpeg', 'jpg', 'jxl', 'png',
     'svg', 'tga', 'tif', 'tiff', 'webp', 'psd'
 }
 
 function get_extension(path) -- from autoload.lua
-    match = string.match(path, "%.([^%.]+)$" )
+    local match = string.match(path, "%.([^%.]+)$" )
     if match == nil then
         return "nomatch"
     else
@@ -33,16 +25,16 @@ function get_extension(path) -- from autoload.lua
 end
 
 function remove_key_binding_if_not_first()
-    playlist_pos = mp.get_property_native("playlist-pos")
-    playlist_count = mp.get_property_native("playlist-count")
+    local playlist_pos = mp.get_property_native("playlist-pos")
+    local playlist_count = mp.get_property_native("playlist-count")
     if (playlist_pos ~= 0) then
         remove_key_binding()
     end
 end
 
 function remove_key_binding_if_not_last()
-    playlist_pos = mp.get_property_native("playlist-pos")
-    playlist_count = mp.get_property_native("playlist-count")
+    local playlist_pos = mp.get_property_native("playlist-pos")
+    local playlist_count = mp.get_property_native("playlist-count")
     if ((playlist_pos+1) ~= playlist_count) then
         remove_key_binding()
     end
@@ -52,18 +44,26 @@ function remove_key_binding()
     mp.remove_key_binding("WHEEL_UP")
     mp.remove_key_binding("WHEEL_DOWN")
     mp.remove_key_binding("MBTN_BACK")
+    --mp.remove_key_binding("WHEEL_LEFT")
+    --mp.remove_key_binding("WHEEL_RIGHT")
 end
 
+local l = {
+    zoom = 0,
+    pan_y_max = 0,
+    pan_y_min = 0,
+}
 function calc_pan_and_zoom()
-    width = mp.get_property_native("width")
-    height = mp.get_property_native("height")
-    osd_width = mp.get_property_native("osd-width")
-    osd_height = mp.get_property_native("osd-height")
+    local width = mp.get_property_native("width")
+    local height = mp.get_property_native("height")
+    local osd_width = mp.get_property_native("osd-width")
+    local osd_height = mp.get_property_native("osd-height")
     l.zoom = math.log(height/osd_height*osd_width/width)/math.log(2)
     l.pan_y_max = (1-osd_height/(osd_width/width*height))/2
     l.pan_y_min = -l.pan_y_max
 end
 
+local fit_to_width = false
 function do_fit_to_width(f)
     if (f) then
         fit_to_width = true
@@ -81,9 +81,10 @@ function do_fit_to_width(f)
     end
 end
 
+local last_img_is_prev = true
 function on_WHEEL_UP()
     if (fit_to_width) then
-        y = mp.get_property_native("video-pan-y")
+        local y = mp.get_property_native("video-pan-y")
         if (y > l.pan_y_max) then
             last_img_is_prev = false
             remove_key_binding_if_not_first()
@@ -102,7 +103,7 @@ end
 
 function on_WHEEL_DOWN()
     if (fit_to_width) then
-        y = mp.get_property_native("video-pan-y")
+        local y = mp.get_property_native("video-pan-y")
         if (y < l.pan_y_min) then
             last_img_is_prev = true
             remove_key_binding_if_not_last()
@@ -127,8 +128,9 @@ function on_MBTN_BACK()
     end
 end
 
+local file_type = ""
 function on_start_file()
-    ext = get_extension(mp.get_property_native("filename"))
+    local ext = get_extension(mp.get_property_native("filename"))
     if (ext_img[string.lower(ext)] ~= nil) then
         file_type = "img"
         mp.set_property_bool("pause", true)
@@ -159,14 +161,13 @@ function on_first_frame(_,value)
         mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
         mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
         mp.add_forced_key_binding("MBTN_BACK","MBTN_BACK",on_MBTN_BACK)
-    elseif (file_type == "gif") then
-        mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -1 exact") end)
-        mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 1 exact") end)
     else
         mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -2 exact") end)
         mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 2 exact") end)
         do_fit_to_width(false)
     end
+    -- mp.add_forced_key_binding("WHEEL_LEFT","WHEEL_LEFT",function () remove_key_binding_if_not_first();mp.command("playlist-prev"); end)
+    -- mp.add_forced_key_binding("WHEEL_RIGHT","WHEEL_RIGHT",function () remove_key_binding_if_not_last();mp.command("playlist-next"); end)
 end
 
 -- function on_var(_,value) 

@@ -1,11 +1,4 @@
 local os_time_start = os.time()
-local delay = 3
-local timer_restore = nil
-local p = {
-    last_time_pos = 0,
-}
-local on_wait = false
-local vf = "vapoursynth=\"~~/vs/MEMC_RIFE_NV.vpy\""
 
 function print_time(...)
     print("+" .. os.time() - os_time_start .. "s", ...)
@@ -23,7 +16,7 @@ ext_img = Set { -- from autoload.lua with modify
 }
 
 function get_extension(path) -- from autoload.lua
-    match = string.match(path, "%.([^%.]+)$" )
+    local match = string.match(path, "%.([^%.]+)$" )
     if match == nil then
         return "nomatch"
     else
@@ -62,12 +55,18 @@ end
 --     mp.observe_property("estimated-vf-fps", "native", on_estimated_vf_fps)
 -- end
 
+local vf = "vapoursynth=\"~~/vs/MEMC_RIFE_NV.vpy\""
 function restore()
     mp.set_property_native("vf", vf) --导致丢帧1s左右
     on_wait = false
     print_time("rife on")
 end
 
+local p = {
+    last_time_pos = 0,
+}
+local on_wait = false
+local timer = nil
 function on_seek()
     p.time_pos = mp.get_property_native("time-pos")
     if (p.time_pos == nil) then return end
@@ -77,15 +76,15 @@ function on_seek()
     mp.set_property("vf", "")
     print_time("rife off")
     on_wait = true
-    timer_restore = kill_and_add_timeout(timer_restore, delay, restore)
+    timer = kill_and_add_timeout(timer, 3, restore)
 end
 
 function on_file_loaded()
-    ext = get_extension(mp.get_property_native("filename"))
-    fps = mp.get_property_native("container-fps")
-    width = mp.get_property_native("width")
+    local ext = get_extension(mp.get_property_native("filename"))
+    local fps = mp.get_property_native("container-fps")
+    local width = mp.get_property_native("width")
     if (ext_img[string.lower(ext)] ~= nil or fps < 23 or fps > 30 or width > 2000) then
-        kill_timeout(timer_restore)
+        kill_timeout(timer)
         on_wait = false
         mp.unregister_event(on_seek)
         mp.set_property("vf", "")

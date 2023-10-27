@@ -1,9 +1,4 @@
 local os_time_start = os.time()
-local last_pos = 0
-local next_pos_frac = -1
-local is_key_down = false
-local timer = nil
-local ui_on = false
 
 function print_time(...)
     print("+" .. os.time() - os_time_start .. "s", ...)
@@ -24,6 +19,7 @@ function on_start_file()
     mp.observe_property("estimated-vf-fps", "native", on_first_frame)
 end
 
+local next_pos_frac = -1
 function on_file_loaded()
     if (next_pos_frac ~= -1) then
         mp.set_property_number("percent-pos",next_pos_frac*100)
@@ -37,6 +33,7 @@ function on_first_frame(_,value)
     mp.observe_property("mouse-pos", "native", on_mouse_move)
 end
 
+local is_key_down = false
 function on_fullscreen(_,value)
     if (not value) then
         is_key_down = false
@@ -46,20 +43,21 @@ end
 local assdraw = require 'mp.assdraw'
 local ui = mp.create_osd_overlay("ass-events")
 local ass = assdraw.ass_new()
+local ui_on = false
 function ui_update(name,value)
     if (value == nil) then return end
     if (not ui_on) then return end
-    playlist_count = mp.get_property_native("playlist-count")
-    playlist_pos = mp.get_property_native("playlist-pos")
-    percent_pos = mp.get_property_native("percent-pos")
-    local osd_width, osd_height, osd_par = mp.get_osd_size()
+    local playlist_count = mp.get_property_native("playlist-count")
+    local playlist_pos = mp.get_property_native("playlist-pos")
+    local percent_pos = mp.get_property_native("percent-pos")
+    local osd_width, osd_height, _ = mp.get_osd_size()
     if (percent_pos == nil or playlist_pos == nil or playlist_count == nil) then return end
     if (osd_width == nil or osd_height == nil) then return end
     --
-    ass = assdraw.ass_new()
+    local ass = assdraw.ass_new()
     ass:append("{\\pos(0,0)}{\\rDefault\\blur0\\bord0\\alpha&H00\\1c&H00CC00&}")
     ass:draw_start()
-    pos = (playlist_pos+percent_pos/100)/playlist_count
+    local pos = (playlist_pos+percent_pos/100)/playlist_count
     if (osd_width/osd_height > 854/720) then -- magic number
         ass:rect_cw(0,osd_height*(1-0.085),pos*osd_width,osd_height*(1-0.075))
     else
@@ -72,20 +70,29 @@ function ui_update(name,value)
     ui:update()
 end
 
+local last_mouse_x = 0
+local last_mouse_y = 0
 function on_mouse_move(_,mouse)
+    if (last_mouse_x == mouse.x and last_mouse_y == mouse.y) then 
+        return
+    end
+    last_mouse_x = mouse.x
+    last_mouse_y = mouse.y
+
     show_ui()
     if (is_key_down) then
         walk()
     end
 end
 
+local last_pos = 0
 function walk()
-    playlist_count = mp.get_property_native("playlist-count")
-    osd_width = mp.get_property_native("osd-width")
-    osd_height = mp.get_property_native("osd-height")
-    mouse = mp.get_property_native("mouse-pos")
+    local playlist_count = mp.get_property_native("playlist-count")
+    local osd_width = mp.get_property_native("osd-width")
+    local osd_height = mp.get_property_native("osd-height")
+    local mouse = mp.get_property_native("mouse-pos")
     if (mouse.hover and mouse.y > 0.8*osd_height) then
-        x = playlist_count*mouse.x/osd_width
+        local x = playlist_count*mouse.x/osd_width
         next_pos = math.floor(x)
         next_pos_frac = x - next_pos
         if (last_pos ~= next_pos) then
@@ -98,6 +105,7 @@ function walk()
     end
 end
 
+local timer = nil
 function show_ui()
     if (not ui_on) then
         ui_on = true
