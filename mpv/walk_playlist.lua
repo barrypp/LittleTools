@@ -1,23 +1,5 @@
-local os_time_start = os.time()
-
-function print_time(...)
-    print("+" .. os.time() - os_time_start .. "s", ...)
-end
-
-function kill_timeout(timer)
-    if (timer ~= nil and timer:is_enabled()) then
-        timer:kill()
-    end
-end
-
-function kill_and_add_timeout(timer,...)
-    kill_timeout(timer)
-    return mp.add_timeout(...)
-end
-
-function on_start_file()
-    mp.observe_property("estimated-vf-fps", "native", on_first_frame)
-end
+package.path = package.path .. ";" .. debug.getinfo(1).source:match("@?(.*/)") .. "?.lua"
+require 'tool'
 
 local next_pos_frac = -1
 function on_file_loaded()
@@ -25,12 +7,14 @@ function on_file_loaded()
         mp.set_property_number("percent-pos",next_pos_frac*100)
         next_pos_frac = -1
     end
+    mp.observe_property("estimated-vf-fps", "native", on_first_frame)
 end
 
+local is_first_frame_done = false
 function on_first_frame(_,value)
     if (value == nil) then return end
     mp.unobserve_property(on_first_frame)
-    mp.observe_property("mouse-pos", "native", on_mouse_move)
+    is_first_frame_done = true
 end
 
 local is_key_down = false
@@ -70,17 +54,9 @@ function ui_update(name,value)
     ui:update()
 end
 
-local last_mouse_x = 0
-local last_mouse_y = 0
 function on_mouse_move(_,mouse)
-    if (last_mouse_x == mouse.x and last_mouse_y == mouse.y) then 
-        return
-    end
-    last_mouse_x = mouse.x
-    last_mouse_y = mouse.y
-
     show_ui()
-    if (is_key_down) then
+    if (is_key_down and is_first_frame_done) then
         walk()
     end
 end
@@ -96,7 +72,7 @@ function walk()
         next_pos = math.floor(x)
         next_pos_frac = x - next_pos
         if (last_pos ~= next_pos) then
-            mp.unobserve_property(on_mouse_move)
+            is_first_frame_done = false
             mp.set_property_number("playlist-pos",next_pos)
             last_pos = next_pos
         else
@@ -133,9 +109,9 @@ function on_key(s)
     end
 end
 
-mp.register_event("start-file", on_start_file)
 mp.register_event("file-loaded", on_file_loaded)
 mp.observe_property("fullscreen", "native", on_fullscreen)
+mp.observe_property("mouse-pos", "native", on_mouse_move)
 mp.add_forced_key_binding("/","/",on_key,{repeatable=false;complex=true})
-
+--mp.add_forced_key_binding("MOUSE_LEAVE","MOUSE_LEAVE",hide_ui)
 
