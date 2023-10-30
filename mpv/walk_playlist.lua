@@ -1,19 +1,21 @@
 package.path = package.path .. ";" .. debug.getinfo(1).source:match("@?(.*/)") .. "?.lua"
 require 'tool'
 
+function on_start_file()
+    mp.register_event("playback-restart", on_playback_restart)
+end
+
 local next_pos_frac = -1
 function on_file_loaded()
     if (next_pos_frac ~= -1) then
         mp.set_property_number("percent-pos",next_pos_frac*100)
         next_pos_frac = -1
     end
-    mp.observe_property("estimated-vf-fps", "native", on_first_frame)
 end
 
 local is_first_frame_done = false
-function on_first_frame(_,value)
-    if (value == nil) then return end
-    mp.unobserve_property(on_first_frame)
+function on_playback_restart()
+    mp.unregister_event(on_playback_restart)
     is_first_frame_done = true
 end
 
@@ -109,9 +111,10 @@ function on_key(s)
     end
 end
 
+mp.register_event("start-file", on_start_file)
 mp.register_event("file-loaded", on_file_loaded)
 mp.observe_property("fullscreen", "native", on_fullscreen)
 mp.observe_property("mouse-pos", "native", on_mouse_move)
-mp.add_forced_key_binding("/","/",on_key,{repeatable=false;complex=true})
+mp.add_forced_key_binding("ENTER","ENTER",on_key,{repeatable=false;complex=true})
 --mp.add_forced_key_binding("MOUSE_LEAVE","MOUSE_LEAVE",hide_ui)
 

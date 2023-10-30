@@ -33,10 +33,16 @@ function print_table(v,pre)
     end
 end
 
-function is_img()
+function is_img() -- after file-loaded
     local count = mp.get_property_native("estimated-frame-count")
     local fps = mp.get_property_native("container-fps")
     if (count == nil or fps == nil) then return false end
     if (count == 0 and fps == 1) then return true end
     return false
+end
+
+function reset_pan_zoom()
+    mp.set_property_number("video-zoom",0)
+    mp.set_property_number("video-pan-x",0)
+    mp.set_property_number("video-pan-y",0)
 end
