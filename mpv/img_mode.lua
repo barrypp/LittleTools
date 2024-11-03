@@ -40,22 +40,25 @@ function calc_pan_and_zoom() --"osd-dimensions"的scaled_width在on_playback_res
     end
 end
 
-local last_img_is_prev = true
+local last_playlist_pos = 0
 function do_fit_to_width()
     calc_pan_and_zoom()
     mp.set_property_number("video-zoom",l.zoom)
     mp.set_property_number("video-pan-x",0)
-    if (last_img_is_prev) then
+    local playlist_pos = mp.get_property_native("playlist-pos")
+    if (last_playlist_pos < playlist_pos) then
         mp.set_property_number("video-pan-y",l.pan_y_max)
-    else
+    elseif (last_playlist_pos > playlist_pos) then
         mp.set_property_number("video-pan-y",l.pan_y_min)
+    else
+        mp.set_property_number("video-pan-y",0)
     end
+    last_playlist_pos = playlist_pos
 end
 
 function on_WHEEL_UP()
     local y = mp.get_property_native("video-pan-y")
     if (y >= l.pan_y_max or not fit_to_width) then
-        last_img_is_prev = false
         remove_key_binding_if_middle() --在load done之前可能有多余操作
         mp.command("playlist-prev")
     else
@@ -70,7 +73,6 @@ end
 function on_WHEEL_DOWN()
     local y = mp.get_property_native("video-pan-y")
     if (y <= l.pan_y_min or not fit_to_width) then
-        last_img_is_prev = true
         remove_key_binding_if_middle() --在load done之前可能有多余操作
         mp.command("playlist-next")
     else
@@ -108,12 +110,16 @@ end
 function on_HOME()
     if (fit_to_width) then
         mp.set_property_number("video-pan-y",l.pan_y_max)
+    else
+        mp.set_property_number("playlist-pos",0)
     end
 end
 
 function on_END()
     if (fit_to_width) then
         mp.set_property_number("video-pan-y",l.pan_y_min)
+    else
+        mp.set_property_number("playlist-pos",mp.get_property_native("playlist-count")-1)
     end
 end
 
@@ -125,11 +131,6 @@ function on_playback_restart()
         mp.add_forced_key_binding("MBTN_BACK","MBTN_BACK",on_MBTN_BACK)
         mp.add_forced_key_binding("HOME","HOME",on_HOME)
         mp.add_forced_key_binding("END","END",on_END)
-    else
-        mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",function () mp.command("seek -2 exact") end)
-        mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",function () mp.command("seek 2 exact") end)
-        mp.add_forced_key_binding("HOME","HOME",function () mp.set_property_number("percent-pos",0) end)
-        mp.add_forced_key_binding("END","END",function () mp.set_property_number("percent-pos",100) end)
     end
 end
 

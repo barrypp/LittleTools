@@ -39,6 +39,7 @@ function ui_update(name,value)
     local osd_width, osd_height, _ = mp.get_osd_size()
     if (percent_pos == nil or playlist_pos == nil or playlist_count == nil) then return end
     if (osd_width == nil or osd_height == nil) then return end
+    if (is_img()) then percent_pos = 100 end
     --
     local ass = assdraw.ass_new()
     ass:append("{\\pos(0,0)}{\\rDefault\\blur0\\bord0\\alpha&H00\\1c&H00CC00&}")
@@ -116,5 +117,5 @@ mp.register_event("file-loaded", on_file_loaded)
 mp.observe_property("fullscreen", "native", on_fullscreen)
 mp.observe_property("mouse-pos", "native", on_mouse_move)
 mp.add_forced_key_binding("ENTER","ENTER",on_key,{repeatable=false;complex=true})
---mp.add_forced_key_binding("MOUSE_LEAVE","MOUSE_LEAVE",hide_ui)
+--mp.add_key_binding("MOUSE_LEAVE","MOUSE_LEAVE",function () print_time("MOUSE_LEAVE") end) won't work
 
