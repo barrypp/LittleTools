@@ -22,6 +22,12 @@ Set-VMSwitch WSL -NetAdapterName '以太网' #bridge wsl to LAN
 Get-ChildItem .\*.mp4 | Sort-Object {[int]($_.basename -replace '\D')} | % {echo "file '$_'" >> 1.txt}
 ```
 
+## ReFS
+```
+fsutil fsinfo refsinfo X:
+Get-Item -Path '.' | Set-FileIntegrity -Enable $True
+```
+
 ## check & fix system
 ```
 sfc /scannow
