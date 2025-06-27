@@ -45,6 +45,7 @@ function on_playback_restart()
     if (not is_img()) then
         mp.add_forced_key_binding("WHEEL_UP","WHEEL_UP",on_WHEEL_UP)
         mp.add_forced_key_binding("WHEEL_DOWN","WHEEL_DOWN",on_WHEEL_DOWN)
+        --mp.add_forced_key_binding("WHEEL_LEFT","WHEEL_LEFT",on_WHEEL_LEFT,{complex=true}) --WHEEL_LEFT与WHEEL_RIGHT无法识别up与down状态，因此无法用来精确控制playlist-prev/playlist-next
         mp.add_forced_key_binding("HOME","HOME",function () mp.command("add volume 2") end,{repeatable=true})
         mp.add_forced_key_binding("END","END",function () mp.command("add volume -2") end,{repeatable=true})
     end

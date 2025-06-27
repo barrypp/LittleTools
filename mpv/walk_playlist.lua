@@ -57,10 +57,21 @@ function ui_update(name,value)
     ui:update()
 end
 
+
 function on_mouse_move(_,mouse)
     show_ui()
     if (is_key_down and is_first_frame_done) then
         walk()
+    end
+end
+
+function on_key(s)
+    if (s.event == "down") then -- and mp.get_property_native("fullscreen")) then
+        is_key_down = true
+        walk()
+        show_ui()
+    elseif (s.event == "up") then
+        is_key_down = false
     end
 end
 
@@ -85,15 +96,18 @@ function walk()
 end
 
 local timer = nil
+visibility = "auto"
 function show_ui()
-    if (not ui_on) then
+    if (not ui_on and visibility ~= "never") then
         ui_on = true
         mp.observe_property("playlist-count", "native", ui_update)
         mp.observe_property("playlist-pos", "native", ui_update)
         mp.observe_property("osd-dimensions", "native", ui_update)
         mp.observe_property("percent-pos", "native", ui_update)
     end
-    timer = kill_and_add_timeout(timer, 0.5, hide_ui)
+    if (visibility == "auto") then
+        timer = kill_and_add_timeout(timer, 0.5, hide_ui)
+    end
 end
 
 function hide_ui()
@@ -102,13 +116,13 @@ function hide_ui()
     ui:remove()
 end
 
-function on_key(s)
-    if (s.event == "down") then -- and mp.get_property_native("fullscreen")) then
-        is_key_down = true
-        walk()
+function on_visibility(_,v)
+    visibility = v
+    if (v == "always") then
         show_ui()
-    elseif (s.event == "up") then
-        is_key_down = false
+        kill_timeout(timer)
+    elseif (v == "never") then
+        hide_ui()
     end
 end
 
@@ -116,6 +130,7 @@ mp.register_event("start-file", on_start_file)
 mp.register_event("file-loaded", on_file_loaded)
 mp.observe_property("fullscreen", "native", on_fullscreen)
 mp.observe_property("mouse-pos", "native", on_mouse_move)
+mp.observe_property("user-data/osc/visibility", "native", on_visibility)
 mp.add_forced_key_binding("ENTER","ENTER",on_key,{repeatable=false;complex=true})
 --mp.add_key_binding("MOUSE_LEAVE","MOUSE_LEAVE",function () print_time("MOUSE_LEAVE") end) won't work
 

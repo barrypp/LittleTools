@@ -59,3 +59,13 @@ end
 function set_table_default(t, d)
     setmetatable(t, {__index = function () return d end})
 end
+
+function is_middle()
+    local playlist_pos = mp.get_property_native("playlist-pos")
+    local playlist_count = mp.get_property_native("playlist-count")
+    if (playlist_pos ~= 0 and (playlist_pos+1) ~= playlist_count) then
+        return true
+    else
+        return false
+    end
+end

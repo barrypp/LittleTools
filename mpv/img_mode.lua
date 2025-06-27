@@ -2,9 +2,7 @@ package.path = package.path .. ";" .. debug.getinfo(1).source:match("@?(.*/)") .
 require 'tool'
 
 function remove_key_binding_if_middle()
-    local playlist_pos = mp.get_property_native("playlist-pos")
-    local playlist_count = mp.get_property_native("playlist-count")
-    if (playlist_pos ~= 0 and (playlist_pos+1) ~= playlist_count) then
+    if is_middle() then
         remove_key_binding()
     end
 end
@@ -97,10 +95,17 @@ function on_start_file()
     mp.register_event("playback-restart", on_playback_restart) -- 若在on_file_loaded时才运行，可能收不到消息
 end
 
+function on_width(_,v)
+    if (v ~= nil) then
+        mp.unobserve_property(on_width)
+        do_fit_to_width()
+    end
+end
+
 function on_file_loaded()
     if (fit_to_width) then
         if (is_img()) then
-            do_fit_to_width()
+            mp.observe_property("width", "native", on_width)
         else
             reset_pan_zoom()
         end
